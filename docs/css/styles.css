@@ -74,7 +74,7 @@
   --bs-border-radius-2xl: 2rem;
   --bs-border-radius-pill: 50rem;
   --bs-link-color: #800000;
-  --bs-link-hover-color: #974a2d;
+  --bs-link-hover-color: #660000;
   --bs-code-color: #d63384;
   --bs-highlight-bg: #fff3cd;
 }
@@ -2023,7 +2023,7 @@ progress {
 .form-control:focus {
   color: #212529;
   background-color: #fff;
-  border-color: #deae9c;
+  border-color: #cc8888;
   outline: 0;
   box-shadow: 0 0 0 0.25rem rgba(189, 93, 56, 0.25);
 }
@@ -2170,7 +2170,7 @@ textarea.form-control-lg {
   }
 }
 .form-select:focus {
-  border-color: #deae9c;
+  border-color: #cc8888;
   outline: 0;
   box-shadow: 0 0 0 0.25rem rgba(189, 93, 56, 0.25);
 }
@@ -2250,7 +2250,7 @@ textarea.form-control-lg {
   filter: brightness(90%);
 }
 .form-check-input:focus {
-  border-color: #deae9c;
+  border-color: #cc8888;
   outline: 0;
   box-shadow: 0 0 0 0.25rem rgba(189, 93, 56, 0.25);
 }
@@ -2850,12 +2850,12 @@ textarea.form-control-lg {
   --bs-btn-bg: #800000;
   --bs-btn-border-color: #800000;
   --bs-btn-hover-color: #000;
-  --bs-btn-hover-bg: #c77556;
-  --bs-btn-hover-border-color: #c46d4c;
+  --bs-btn-hover-bg: #990000;
+  --bs-btn-hover-border-color: #880000;
   --bs-btn-focus-shadow-rgb: 161, 79, 48;
   --bs-btn-active-color: #000;
-  --bs-btn-active-bg: #ca7d60;
-  --bs-btn-active-border-color: #c46d4c;
+  --bs-btn-active-bg: #aa0000;
+  --bs-btn-active-border-color: #880000;
   --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
   --bs-btn-disabled-color: #000;
   --bs-btn-disabled-bg: #800000;
@@ -4349,12 +4349,12 @@ textarea.form-control-lg {
   --bs-accordion-btn-icon-transform: rotate(-180deg);
   --bs-accordion-btn-icon-transition: transform 0.2s ease-in-out;
   --bs-accordion-btn-active-icon: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23aa5432'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
-  --bs-accordion-btn-focus-border-color: #deae9c;
+  --bs-accordion-btn-focus-border-color: #cc8888;
   --bs-accordion-btn-focus-box-shadow: 0 0 0 0.25rem rgba(189, 93, 56, 0.25);
   --bs-accordion-body-padding-x: 1.25rem;
   --bs-accordion-body-padding-y: 1rem;
-  --bs-accordion-active-color: #aa5432;
-  --bs-accordion-active-bg: #f8efeb;
+  --bs-accordion-active-color: #800000;
+  --bs-accordion-active-bg: #f9e8e8;
 }
 
 .accordion-button {
@@ -6700,7 +6700,7 @@ textarea.form-control-lg {
   color: #800000 !important;
 }
 .link-primary:hover, .link-primary:focus {
-  color: #ca7d60 !important;
+  color: #aa0000 !important;
 }
 
 .link-secondary {
@@ -10877,7 +10877,7 @@ p.lead {
   text-transform: uppercase;
 }
 #sideNav .navbar-toggler:focus {
-  outline-color: #d48a6e;
+  outline-color: #cc7777;
 }
 
 @media (min-width: 992px) {
