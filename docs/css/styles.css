@@ -10834,7 +10834,7 @@ body {
 @media (min-width: 992px) {
   body {
     padding-top: 0;
-    padding-left: 17rem;
+    padding-left: 20rem;
   }
 }
 h1, .h1,
@@ -10890,7 +10890,7 @@ p.lead {
     left: 0;
     display: flex;
     flex-direction: column;
-    width: 17rem;
+    width: 20rem;
     height: 100vh;
   }
   #sideNav .navbar-brand {
@@ -10901,7 +10901,8 @@ p.lead {
   #sideNav .navbar-brand .img-profile {
     max-width: 10rem;
     max-height: 10rem;
-    border: 0.5rem solid rgba(255, 255, 255, 0.2);
+    border: 0.35rem solid #fff;
+    box-shadow: 0 0 0 0.25rem #800000;
   }
   #sideNav .navbar-collapse {
     display: flex;
@@ -10969,4 +10970,99 @@ section.resume-section .resume-section-content {
     padding-top: 5rem;
     padding-bottom: 5rem;
   }
+}
+
+/* ===== CUSTOM AESTHETIC ENHANCEMENTS ===== */
+
+/* 1. Typography — name size refinement */
+section#about h1 {
+  font-size: 4rem;
+  letter-spacing: 0.05em;
+}
+@media (min-width: 992px) {
+  section#about h1 {
+    font-size: 5.5rem;
+  }
+}
+
+/* 3. Profile photo border — mobile */
+.img-profile.d-lg-none {
+  border: 0.25rem solid #800000;
+  box-shadow: 0 0 0 0.15rem rgba(128, 0, 0, 0.2);
+}
+
+/* 4. Section dividers — maroon tint */
+hr.m-0 {
+  border-color: rgba(128, 0, 0, 0.25);
+  border-width: 2px;
+  opacity: 1;
+}
+
+/* 5. Experience bullet styling — maroon chevrons */
+section#experience ul li,
+section#education ul li {
+  position: relative;
+  list-style: none;
+  padding-left: 1.25rem;
+  margin-bottom: 0.35rem;
+}
+section#experience ul,
+section#education ul {
+  padding-left: 0.25rem;
+}
+section#experience ul li::before,
+section#education ul li::before {
+  content: '\f054';
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+  color: #800000;
+  position: absolute;
+  left: 0;
+  top: 0.1em;
+  font-size: 0.7em;
+}
+
+/* 6. Date badge / pill styling */
+.flex-shrink-0 .text-primary {
+  display: inline-block;
+  background-color: rgba(128, 0, 0, 0.08);
+  color: #800000 !important;
+  padding: 0.2rem 0.75rem;
+  border-radius: 50rem;
+  font-weight: 700;
+  font-size: 0.875rem;
+  white-space: nowrap;
+  border: 1px solid rgba(128, 0, 0, 0.2);
+}
+
+/* 7. Social icon hover transition */
+.social-icons .social-icon {
+  transition: background-color 0.25s ease, transform 0.2s ease;
+}
+.social-icons .social-icon:hover {
+  transform: scale(1.12);
+}
+
+/* 8. Mobile about section — tighten top spacing */
+@media (max-width: 991px) {
+  section#about {
+    padding-top: 2rem;
+  }
+}
+
+/* 10. Footer */
+footer.site-footer {
+  background-color: #2d2d2d;
+  color: #adb5bd;
+  text-align: center;
+  padding: 1.5rem 1rem;
+  font-size: 0.85rem;
+}
+footer.site-footer a {
+  color: rgba(200, 100, 100, 0.9);
+  text-decoration: none;
+}
+footer.site-footer a:hover {
+  color: #fff;
+}
 }
