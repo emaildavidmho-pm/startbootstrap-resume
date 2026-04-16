@@ -10974,17 +10974,6 @@ section.resume-section .resume-section-content {
 
 /* ===== CUSTOM AESTHETIC ENHANCEMENTS ===== */
 
-/* 1. Typography — name size refinement */
-section#about h1 {
-  font-size: 4rem;
-  letter-spacing: 0.05em;
-}
-@media (min-width: 992px) {
-  section#about h1 {
-    font-size: 5.5rem;
-  }
-}
-
 /* 3. Profile photo border — mobile */
 .img-profile.d-lg-none {
   border: 0.25rem solid #800000;
