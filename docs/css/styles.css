@@ -11001,14 +11001,14 @@ section#education ul {
 }
 section#experience ul li::before,
 section#education ul li::before {
-  content: '\f054';
-  font-family: 'Font Awesome 6 Free';
-  font-weight: 900;
+  content: '›';
   color: #800000;
   position: absolute;
   left: 0;
-  top: 0.1em;
-  font-size: 0.7em;
+  top: 0;
+  font-size: 1.2em;
+  font-weight: bold;
+  line-height: 1.5;
 }
 
 /* 6. Date badge / pill styling */
