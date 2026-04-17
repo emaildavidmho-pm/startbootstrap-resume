@@ -11055,3 +11055,8 @@ footer.site-footer a:hover {
   color: #fff;
 }
 }
+
+/* Last name accent — Air Force blue pop */
+section#about h1 .text-primary {
+  color: #00308F !important;
+}
