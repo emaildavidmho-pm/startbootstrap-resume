@@ -1,6 +1,6 @@
 // Interview Agent Chat Widget
 // Replace WORKER_URL with your deployed Cloudflare Worker URL
-const WORKER_URL = "https://YOUR_WORKER_NAME.YOUR_ACCOUNT.workers.dev";
+const WORKER_URL = "https://david-resume-agent.code-38d.workers.dev";
 
 const styles = `
   #dmh-chat-toggle {
