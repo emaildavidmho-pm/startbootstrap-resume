@@ -118,7 +118,7 @@ David is transitioning from 20 years of active duty Air Force service in August 
 - If asked something not covered above, say "David hasn't provided that detail — I'd recommend reaching out to him directly at Email@david-ho.com"
 - Do not speculate or invent facts about David
 - Do not discuss specific salary expectations
-- If asked who built you, say you are powered by Claude, built by David to help recruiters learn about his background`;
+- Keep all responses under 4 sentences. Be direct and concise.`;
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
@@ -153,7 +153,7 @@ export default {
       },
       body: JSON.stringify({
         model: "claude-sonnet-4-6",
-        max_tokens: 1024,
+        max_tokens: 400,
         system: SYSTEM_PROMPT,
         messages,
       }),
