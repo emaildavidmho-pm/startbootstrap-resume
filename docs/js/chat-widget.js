@@ -1,6 +1,43 @@
 // Interview Agent Chat Widget
-// Replace WORKER_URL with your deployed Cloudflare Worker URL
 const WORKER_URL = "https://david-resume-agent.code-38d.workers.dev";
+
+const ROLE_PROMPTS = {
+  "Recruiter": [
+    "When is David available?",
+    "What's his security clearance?",
+    "What roles is he targeting?",
+    "Where is he relocating?",
+    "Give me a quick background summary."
+  ],
+  "Hiring Manager": [
+    "What programs has he managed?",
+    "How large are the portfolios he's run?",
+    "How has he handled a program in trouble?",
+    "What does his leadership style look like?",
+    "What technical domains does he cover?"
+  ],
+  "Technical Lead": [
+    "What engineering disciplines does he have?",
+    "What's his DevSecOps and Agile experience?",
+    "What certifications does he hold?",
+    "What major systems has he worked on?",
+    "What's his software acquisition background?"
+  ],
+  "Executive": [
+    "What are his top career achievements?",
+    "What's his CCMD-level experience?",
+    "How has he driven strategic organizational change?",
+    "What's his vision for his next role?",
+    "What's his experience working with senior DoD leadership?"
+  ]
+};
+
+const ROLE_WELCOMES = {
+  "Recruiter": "I'll keep my answers focused on David's availability, clearance, and fit for your open roles.",
+  "Hiring Manager": "I'll focus on David's program management experience, portfolio scale, and leadership record.",
+  "Technical Lead": "I'll highlight David's engineering background, technical certifications, and systems expertise.",
+  "Executive": "I'll focus on David's strategic achievements, senior-level experience, and career trajectory."
+};
 
 const styles = `
   #dmh-chat-toggle {
@@ -136,6 +173,19 @@ const styles = `
     white-space: nowrap;
   }
   .dmh-prompt-chip:hover { background-color: #dce5f7; }
+  .dmh-role-label {
+    font-size: 0.75rem;
+    color: #6c757d;
+    width: 100%;
+    margin-bottom: 0.1rem;
+  }
+  .dmh-role-btn {
+    background: #f0f4ff;
+    border: 1px solid #c0cce8;
+    color: #002366;
+    font-weight: 600;
+  }
+  .dmh-role-btn:hover { background-color: #002366; color: #fff; border-color: #002366; }
   @media (max-width: 480px) {
     #dmh-chat-window { width: calc(100vw - 2rem); right: 1rem; bottom: 5rem; }
     #dmh-chat-toggle { bottom: 1rem; right: 1rem; }
@@ -160,16 +210,9 @@ chatWindow.innerHTML = `
     Ask About David <span>AI Interview Agent</span>
   </div>
   <div id="dmh-chat-messages">
-    <div class="dmh-msg agent">Hi! I'm David's interview agent. Ask me anything about his background, experience, or availability.</div>
+    <div class="dmh-msg agent">Hi! I'm David's interview agent. To get started, select your role below.</div>
   </div>
-  <div id="dmh-chat-prompts">
-    <button class="dmh-prompt-chip">What's David's background?</button>
-    <button class="dmh-prompt-chip">What programs has he managed?</button>
-    <button class="dmh-prompt-chip">What's his clearance level?</button>
-    <button class="dmh-prompt-chip">When is he available?</button>
-    <button class="dmh-prompt-chip">What roles is he targeting?</button>
-    <button class="dmh-prompt-chip">What are his key skills?</button>
-  </div>
+  <div id="dmh-chat-prompts"></div>
   <div id="dmh-chat-input-row">
     <input id="dmh-chat-input" type="text" placeholder="Ask a question..." maxlength="500" />
     <button id="dmh-chat-send">Send</button>
@@ -178,9 +221,45 @@ chatWindow.innerHTML = `
 document.body.appendChild(chatWindow);
 
 const messages = [];
+let roleSelected = false;
 const messagesEl = chatWindow.querySelector("#dmh-chat-messages");
 const inputEl = chatWindow.querySelector("#dmh-chat-input");
 const sendBtn = chatWindow.querySelector("#dmh-chat-send");
+const promptsEl = chatWindow.querySelector("#dmh-chat-prompts");
+
+function showRoleSelector() {
+  promptsEl.innerHTML = "";
+  const label = document.createElement("div");
+  label.className = "dmh-role-label";
+  label.textContent = "I'm visiting as a…";
+  promptsEl.appendChild(label);
+  ["Recruiter", "Hiring Manager", "Technical Lead", "Executive"].forEach(role => {
+    const btn = document.createElement("button");
+    btn.className = "dmh-prompt-chip dmh-role-btn";
+    btn.dataset.role = role;
+    btn.textContent = role;
+    promptsEl.appendChild(btn);
+  });
+}
+
+function selectRole(role) {
+  roleSelected = true;
+  const firstMsg = messagesEl.querySelector(".dmh-msg.agent");
+  if (firstMsg) {
+    firstMsg.textContent = `Hi! I'm David's interview agent. ${ROLE_WELCOMES[role] || "Ask me anything about his background, experience, or availability."}`;
+  }
+  messages.push({ role: "user", content: `Context: I am a ${role} evaluating David for potential opportunities. Please tailor your responses to my perspective.` });
+  messages.push({ role: "assistant", content: `Understood — I'll tailor my responses for a ${role}.` });
+  promptsEl.innerHTML = "";
+  (ROLE_PROMPTS[role] || []).forEach(chipText => {
+    const chip = document.createElement("button");
+    chip.className = "dmh-prompt-chip";
+    chip.textContent = chipText;
+    promptsEl.appendChild(chip);
+  });
+}
+
+showRoleSelector();
 
 toggleBtn.addEventListener("click", () => {
   chatWindow.classList.toggle("hidden");
@@ -263,11 +342,14 @@ inputEl.addEventListener("keydown", (e) => {
   if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
 });
 
-const promptsEl = chatWindow.querySelector("#dmh-chat-prompts");
 promptsEl.addEventListener("click", (e) => {
   const chip = e.target.closest(".dmh-prompt-chip");
   if (!chip) return;
-  inputEl.value = chip.textContent;
-  promptsEl.style.display = "none";
-  sendMessage();
+  if (chip.dataset.role) {
+    selectRole(chip.dataset.role);
+  } else {
+    inputEl.value = chip.textContent;
+    promptsEl.style.display = "none";
+    sendMessage();
+  }
 });
