@@ -186,6 +186,19 @@ const styles = `
     font-weight: 600;
   }
   .dmh-role-btn:hover { background-color: #002366; color: #fff; border-color: #002366; }
+  .dmh-change-role-btn {
+    background: transparent;
+    border: none;
+    color: #6c757d;
+    font-size: 0.7rem;
+    cursor: pointer;
+    padding: 0.15rem 0.1rem;
+    width: 100%;
+    text-align: right;
+    margin-top: 0.15rem;
+    font-family: 'Muli', sans-serif;
+  }
+  .dmh-change-role-btn:hover { color: #002366; text-decoration: underline; }
   @media (max-width: 480px) {
     #dmh-chat-window { width: calc(100vw - 2rem); right: 1rem; bottom: 5rem; }
     #dmh-chat-toggle { bottom: 1rem; right: 1rem; }
@@ -228,6 +241,7 @@ const sendBtn = chatWindow.querySelector("#dmh-chat-send");
 const promptsEl = chatWindow.querySelector("#dmh-chat-prompts");
 
 function showRoleSelector() {
+  promptsEl.style.display = "";
   promptsEl.innerHTML = "";
   const label = document.createElement("div");
   label.className = "dmh-role-label";
@@ -242,14 +256,25 @@ function showRoleSelector() {
   });
 }
 
+function addChangeRoleButton() {
+  const btn = document.createElement("button");
+  btn.className = "dmh-change-role-btn";
+  btn.textContent = "↩ Change role";
+  promptsEl.appendChild(btn);
+}
+
 function selectRole(role) {
+  const isFirstSelection = !roleSelected;
   roleSelected = true;
-  const firstMsg = messagesEl.querySelector(".dmh-msg.agent");
-  if (firstMsg) {
-    firstMsg.textContent = `Hi! I'm David's interview agent. ${ROLE_WELCOMES[role] || "Ask me anything about his background, experience, or availability."}`;
+  if (isFirstSelection) {
+    const firstMsg = messagesEl.querySelector(".dmh-msg.agent");
+    if (firstMsg) {
+      firstMsg.textContent = `Hi! I'm David's interview agent. ${ROLE_WELCOMES[role] || "Ask me anything about his background, experience, or availability."}`;
+    }
   }
   messages.push({ role: "user", content: `Context: I am a ${role} evaluating David for potential opportunities. Please tailor your responses to my perspective.` });
   messages.push({ role: "assistant", content: `Understood — I'll tailor my responses for a ${role}.` });
+  promptsEl.style.display = "";
   promptsEl.innerHTML = "";
   (ROLE_PROMPTS[role] || []).forEach(chipText => {
     const chip = document.createElement("button");
@@ -257,6 +282,7 @@ function selectRole(role) {
     chip.textContent = chipText;
     promptsEl.appendChild(chip);
   });
+  addChangeRoleButton();
 }
 
 showRoleSelector();
@@ -343,13 +369,18 @@ inputEl.addEventListener("keydown", (e) => {
 });
 
 promptsEl.addEventListener("click", (e) => {
+  if (e.target.closest(".dmh-change-role-btn")) {
+    showRoleSelector();
+    return;
+  }
   const chip = e.target.closest(".dmh-prompt-chip");
   if (!chip) return;
   if (chip.dataset.role) {
     selectRole(chip.dataset.role);
   } else {
     inputEl.value = chip.textContent;
-    promptsEl.style.display = "none";
+    promptsEl.innerHTML = "";
+    addChangeRoleButton();
     sendMessage();
   }
 });
