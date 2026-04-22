@@ -116,6 +116,26 @@ const styles = `
     transition: background-color 0.2s;
   }
   #dmh-chat-send:hover { background-color: #00308F; }
+  #dmh-chat-prompts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    padding: 0.6rem 0.75rem;
+    border-top: 1px solid #dee2e6;
+    background: #fff;
+  }
+  .dmh-prompt-chip {
+    background: #f0f4ff;
+    border: 1px solid #c0cce8;
+    color: #002366;
+    border-radius: 50rem;
+    padding: 0.25rem 0.65rem;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    white-space: nowrap;
+  }
+  .dmh-prompt-chip:hover { background-color: #dce5f7; }
   @media (max-width: 480px) {
     #dmh-chat-window { width: calc(100vw - 2rem); right: 1rem; bottom: 5rem; }
     #dmh-chat-toggle { bottom: 1rem; right: 1rem; }
@@ -141,6 +161,14 @@ chatWindow.innerHTML = `
   </div>
   <div id="dmh-chat-messages">
     <div class="dmh-msg agent">Hi! I'm David's interview agent. Ask me anything about his background, experience, or availability.</div>
+  </div>
+  <div id="dmh-chat-prompts">
+    <button class="dmh-prompt-chip">What's David's background?</button>
+    <button class="dmh-prompt-chip">What programs has he managed?</button>
+    <button class="dmh-prompt-chip">What's his clearance level?</button>
+    <button class="dmh-prompt-chip">When is he available?</button>
+    <button class="dmh-prompt-chip">What roles is he targeting?</button>
+    <button class="dmh-prompt-chip">What are his key skills?</button>
   </div>
   <div id="dmh-chat-input-row">
     <input id="dmh-chat-input" type="text" placeholder="Ask a question..." maxlength="500" />
@@ -205,4 +233,13 @@ function appendMessage(role, text, isTyping = false) {
 sendBtn.addEventListener("click", sendMessage);
 inputEl.addEventListener("keydown", (e) => {
   if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+});
+
+const promptsEl = chatWindow.querySelector("#dmh-chat-prompts");
+promptsEl.addEventListener("click", (e) => {
+  const chip = e.target.closest(".dmh-prompt-chip");
+  if (!chip) return;
+  inputEl.value = chip.textContent;
+  promptsEl.style.display = "none";
+  sendMessage();
 });
