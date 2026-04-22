@@ -178,19 +178,14 @@ async function sendMessage() {
       body: JSON.stringify({ messages }),
     });
 
-    if (!res.ok) {
-      const errText = await res.text();
-      typingEl.remove();
-      appendMessage("agent", `Error ${res.status}: ${errText}`);
-      return;
-    }
+    if (!res.ok) throw new Error("Request failed");
     const data = await res.json();
     typingEl.remove();
     appendMessage("agent", data.reply);
     messages.push({ role: "assistant", content: data.reply });
-  } catch (err) {
+  } catch {
     typingEl.remove();
-    appendMessage("agent", `Connection error: ${err.message}`);
+    appendMessage("agent", "Sorry, I'm having trouble connecting. Please try again or email David directly at Email@david-ho.com.");
   }
 
   sendBtn.disabled = false;
