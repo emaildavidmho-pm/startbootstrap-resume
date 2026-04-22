@@ -209,8 +209,15 @@ async function sendMessage() {
     if (!res.ok) throw new Error("Request failed");
     const data = await res.json();
     typingEl.remove();
-    appendMessage("agent", data.reply);
-    messages.push({ role: "assistant", content: data.reply });
+    const raw = data.reply;
+    const followupMatch = raw.match(/\[FOLLOWUPS:\s*(.+?)\]/s);
+    const cleanReply = raw.replace(/\[FOLLOWUPS:.*?\]/s, "").trim();
+    appendMessage("agent", cleanReply);
+    messages.push({ role: "assistant", content: cleanReply });
+    if (followupMatch) {
+      const chips = followupMatch[1].split("|").map(s => s.trim()).filter(Boolean);
+      showFollowupChips(chips);
+    }
   } catch {
     typingEl.remove();
     appendMessage("agent", "Sorry, I'm having trouble connecting. Please try again or email David directly at Email@david-ho.com.");
@@ -219,6 +226,27 @@ async function sendMessage() {
   sendBtn.disabled = false;
   inputEl.disabled = false;
   inputEl.focus();
+}
+
+function showFollowupChips(chips) {
+  const existing = messagesEl.querySelector(".dmh-followup-chips");
+  if (existing) existing.remove();
+  const row = document.createElement("div");
+  row.className = "dmh-followup-chips";
+  row.style.cssText = "display:flex;flex-wrap:wrap;gap:0.4rem;margin-top:0.25rem;";
+  chips.forEach(chipText => {
+    const chip = document.createElement("button");
+    chip.className = "dmh-prompt-chip";
+    chip.textContent = chipText;
+    chip.addEventListener("click", () => {
+      row.remove();
+      inputEl.value = chipText;
+      sendMessage();
+    });
+    row.appendChild(chip);
+  });
+  messagesEl.appendChild(row);
+  messagesEl.scrollTop = messagesEl.scrollHeight;
 }
 
 function appendMessage(role, text, isTyping = false) {
