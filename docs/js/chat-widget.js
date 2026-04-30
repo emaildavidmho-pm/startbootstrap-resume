@@ -235,6 +235,16 @@ document.body.appendChild(chatWindow);
 
 const messages = [];
 let roleSelected = false;
+let currentRole = null;
+
+function logQuestion(question, source) {
+  if (!currentRole) return;
+  fetch(WORKER_URL.replace(/\/$/, "") + "/log", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ role: currentRole, question, source }),
+  }).catch(() => {});
+}
 const messagesEl = chatWindow.querySelector("#dmh-chat-messages");
 const inputEl = chatWindow.querySelector("#dmh-chat-input");
 const sendBtn = chatWindow.querySelector("#dmh-chat-send");
@@ -266,6 +276,7 @@ function addChangeRoleButton() {
 function selectRole(role) {
   const isFirstSelection = !roleSelected;
   roleSelected = true;
+  currentRole = role;
   if (isFirstSelection) {
     const firstMsg = messagesEl.querySelector(".dmh-msg.agent");
     if (firstMsg) {
@@ -299,6 +310,7 @@ async function sendMessage() {
   inputEl.value = "";
   appendMessage("user", text);
   messages.push({ role: "user", content: text });
+  logQuestion(text, "typed");
 
   const typingEl = appendMessage("agent", "Thinking…", true);
   sendBtn.disabled = true;
@@ -346,6 +358,7 @@ function showFollowupChips(chips) {
     chip.addEventListener("click", () => {
       row.remove();
       inputEl.value = chipText;
+      logQuestion(chipText, "followup");
       sendMessage();
     });
     row.appendChild(chip);
@@ -378,7 +391,9 @@ promptsEl.addEventListener("click", (e) => {
   if (chip.dataset.role) {
     selectRole(chip.dataset.role);
   } else {
-    inputEl.value = chip.textContent;
+    const chipText = chip.textContent;
+    inputEl.value = chipText;
+    logQuestion(chipText, "chip");
     promptsEl.innerHTML = "";
     addChangeRoleButton();
     sendMessage();

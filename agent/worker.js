@@ -117,8 +117,8 @@ David is transitioning from 20 years of active duty Air Force service in August 
 - Be professional, concise, and positive
 - If asked something not covered above, say "David hasn't provided that detail — I'd recommend reaching out to him directly at Email@david-ho.com"
 - Do not speculate or invent facts about David
-- Do not discuss specific salary expectations 
-- In appropriate responses, highlight how David would be a good fit or candidate for the position. Be positive. 
+- Do not discuss specific salary expectations
+- In appropriate responses, highlight how David would be a good fit or candidate for the position. Be positive.
 - If asked who built you, say you were built by David leveraging Claude to help recruiters learn about his background and demonstrate his passion for agentic AI
 - Keep all responses under 4 sentences. Be direct and concise.
 - After every response, on a new line add exactly this format: [FOLLOWUPS: Question one? | Question two? | Question three?]
@@ -126,15 +126,66 @@ David is transitioning from 20 years of active duty Air Force service in August 
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type",
 };
 
 export default {
   async fetch(request, env) {
+    const url = new URL(request.url);
+
     if (request.method === "OPTIONS") {
       return new Response(null, { headers: CORS_HEADERS });
     }
+
+    // Private log export endpoint — no CORS, secret-gated
+    if (request.method === "GET" && url.pathname === "/logs") {
+      if (!env.ADMIN_SECRET || url.searchParams.get("secret") !== env.ADMIN_SECRET) {
+        return new Response("Unauthorized", { status: 401 });
+      }
+      const list = await env.QUESTION_LOGS.list({ prefix: "log:" });
+      const entries = await Promise.all(
+        list.keys.map(async (k) => JSON.parse(await env.QUESTION_LOGS.get(k.name)))
+      );
+      entries.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+      if (url.searchParams.get("format") === "csv") {
+        const rows = [
+          "timestamp,role,source,question",
+          ...entries.map(e =>
+            `${e.timestamp},${e.role},${e.source},"${(e.question || "").replace(/"/g, '""')}"`
+          ),
+        ];
+        return new Response(rows.join("\n"), {
+          headers: {
+            "Content-Type": "text/csv",
+            "Content-Disposition": 'attachment; filename="chat-logs.csv"',
+          },
+        });
+      }
+
+      return new Response(JSON.stringify(entries, null, 2), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    // Question log ingest endpoint
+    if (request.method === "POST" && url.pathname === "/log") {
+      let body;
+      try { body = await request.json(); } catch {
+        return new Response("Invalid JSON", { status: 400, headers: CORS_HEADERS });
+      }
+      const { role, question, source } = body;
+      if (!role || !question) {
+        return new Response("Missing fields", { status: 400, headers: CORS_HEADERS });
+      }
+      const timestamp = new Date().toISOString();
+      const key = `log:${timestamp}:${Math.random().toString(36).slice(2, 9)}`;
+      await env.QUESTION_LOGS.put(key, JSON.stringify({ role, question, source: source || "typed", timestamp }));
+      return new Response("OK", { headers: CORS_HEADERS });
+    }
+
+    // Chat endpoint
     if (request.method !== "POST") {
       return new Response("Method not allowed", { status: 405 });
     }
